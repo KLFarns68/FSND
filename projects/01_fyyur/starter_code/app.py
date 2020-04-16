@@ -12,6 +12,8 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -20,7 +22,11 @@ app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
+
 migrate = Migrate(app, db)
+manager = Manager(app)
+
+manager.add_command('db', MigrateCommand)
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -51,6 +57,9 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    
+if __name__ == '__main__':
+    manager.run()
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
